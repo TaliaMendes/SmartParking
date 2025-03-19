@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Saída - SmartParking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://www.politicaetc.com.br/wp-content/uploads/2022/09/Estacionamento.jpg');
+      background-size: cover;
+      background-position: center bottom;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+    .logo {
+      position: absolute;
+      top: 5px;
+      left: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+    .container {
+      max-width: 500px;
+      background: #fff;
+      margin: 50px auto;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      color: #333;
+    }
+    .container h2 {
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 10px;
+      border: none;
+      background-color: #161614c0;
+      color: white;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ecde1a;
+    }
+    .resultado {
+      text-align: left;
+      background: #f4f4f4;
+      padding: 10px;
+      border-radius: 4px;
+      color: #333;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+    p {
+      margin-top: 20px;
+    }
+    a {
+      color: #111111;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo"><h1>SmartParking</h1></div>
+  <div class="container">
+    <h2>Registrar Saída</h2>
+    <label for="placa">Placa:</label>
+    <input type="text" id="placa" required>
+    <button type="button" onclick="registrarSaida()">Registrar Saída</button>
+    <div id="resultadoSaida" class="resultado"></div>
+    <p><a href="index.html">Voltar para o Menu</a></p>
+  </div>
+
+  <script>
+    async function registrarSaida() {
+      const placa = document.getElementById("placa").value.trim().toUpperCase();
+      try {
+        const response = await fetch(`/registros/saida?placa=${placa}`, { method: "POST" });
+        const data = await response.json();
+        if(response.status != 500) {
+          let mensagem =
+          "Saída registrada com sucesso!\n\n" +
+          "ID do Registro: " + (data.id || "-") + "\n" +
+          "Placa: " + placa + "\n" +
+          "Data de Saída: " + (data.dataSaida ? new Date(data.dataSaida).toLocaleString() : "-") + "\n" +
+          "Valor Pago: R$ " + (data.valorPago || 0);
+
+          document.getElementById("resultadoSaida").innerText = mensagem;
+        }else{
+          let mensagem = "Não é possível registrar saida! Pagamento não confirmado!" 
+          document.getElementById("resultadoSaida").innerText = mensagem;
+        }
+        
+      } catch (error) {
+        document.getElementById("resultadoSaida").innerText = "Erro: " + error;
+      }
+    }
+  </script>
+</body>
+</html>
